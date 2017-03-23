@@ -5,4 +5,6 @@ Raspberry Pi uses USB to communicate with a Xbee Cooridnator, sends commands to 
 
 Paried Xbees are connected to arudinos, useing software serial to let me upload code and watch ouput on serial monitor and to avoid xbees from getting damaged
 
-will have both c and java codef
+will have both c and java code
+c for xbee
+java for rpi
