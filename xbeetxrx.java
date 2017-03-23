@@ -108,18 +108,29 @@ public class xbeetxrx
 	}
 }
 
-	static byte[] frame_make(byte[] address, byte data[]) //makes the API mode frame for the Xbee
+	static byte[] frame_make(byte[] address, byte data[]) //makes the API mode frame for the Xbee transmit request type
 	{
 		int s=18+data.length;
 		byte[] frame= new byte[s];
-		//frametype
 		int i=0;
 		int j=0;
 		byte len=(byte)0x0E;
-		len=(byte)(len+data.length);
+		byte lenh=(byte)0x00;
+		//len=(byte)(len+data.length);
+		
+		for (int i=0;i<data.length;i++)
+		{
+			if(len=(byte)0xff)
+			{
+				lenh++;
+				len=(byte)0x00
+			}
+			else 
+				len++;
+		}	
 
 		frame[i++]=(byte)0x7E; 		//frame Delimiter
-		frame[i++]=(byte)0x00; 		//frame length high (not used)
+		frame[i++]=(byte)lenh; 		//frame length high (not used)
 		frame[i++]=(byte)len;		//frame length low
 		frame[i++]=(byte)0x10;		//frame type 0x10 - Tx req 64bit address
 		frame[i++]=(byte)0x00;		//frame ID (oxo1-disable retry, 0x00 - disable ACK)
@@ -143,7 +154,6 @@ public class xbeetxrx
 	
 		cs = (byte)((-1)-cs);		//checksum = 0xFF-cs, 0xFF is -1 as a signed int
 		frame[i]=cs;			//put frame checksum in its place
-		//System.out.println("frame Made");
 		return frame;			//return frame
 	}
 	
