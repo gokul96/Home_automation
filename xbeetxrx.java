@@ -9,25 +9,69 @@ import java.util.*;
 
 public class xbeetxrx
 {
-	static int[] a={0,0,0,0,0,0,0,0};
-	static int dim_val;
+	//Final variables 
 	static final Serial serial = SerialFactory.createInstance(); //pi4j serial instance creation
-	static byte[] r1={(byte)0x00,(byte)0x13,(byte)0xA2,(byte)0x00,(byte)0x41,(byte)0x54,(byte)0xED,(byte)0xC9}; //address of router 1
-	static byte[] r2={(byte)0x00,(byte)0x13,(byte)0xA2,(byte)0x00,(byte)0x40,(byte)0xD7,(byte)0xBD,(byte)0x24}; //address of router 2
-	static byte[] r3={(byte)0x00,(byte)0x13,(byte)0xA2,(byte)0x00,(byte)0x40,(byte)0xD7,(byte)0xBD,(byte)0x2F}; //address of router 3
-		
-	static byte[] dat={(byte)0x01,(byte)0x01,(byte)0x00}; //data to be sent.
-	//static byte[] rec_dat={0,0,0,0,0,00,0,0,0,0,00,0,0,00,0,0,0,00,0,0,0,0,0};
-	static byte[] rec_inf;
+	static final byte[] r1={(byte)0x00,(byte)0x13,(byte)0xA2,(byte)0x00,(byte)0x41,(byte)0x54,(byte)0xED,(byte)0xC9}; //address of router 1
+	static final byte[] r2={(byte)0x00,(byte)0x13,(byte)0xA2,(byte)0x00,(byte)0x40,(byte)0xD7,(byte)0xBD,(byte)0x24}; //address of router 2
+	static final byte[] r3={(byte)0x00,(byte)0x13,(byte)0xA2,(byte)0x00,(byte)0x40,(byte)0xD7,(byte)0xBD,(byte)0x2F}; //address of router 3
+	//dyanmic variables
+	static int[] a={0,0,0,0,0,0,0,0};
+	static int dim_val;	
+	static byte[] dat={(byte)0x00,(byte)0x00,(byte)0x00}; //data to be sent
+	
+	public static void xbeetxrx() // constructor for xbee serial opening and listening
+	{
+		//opening Serial port
+		try 
+		{
+            // create serial config object
+            SerialConfig config = new SerialConfig();
 
-	static void printar(byte[] a)
+            config.device("/dev/ttyUSB0")
+                  .baud(Baud._9600)
+                  .dataBits(DataBits._8)
+                  .parity(Parity.NONE)
+                  .stopBits(StopBits._1)
+                  .flowControl(FlowControl.NONE);
+
+			serial.open(config);
+			
+		}
+			
+		catch(IOException ex) 
+		{
+            System.out.println(" SERIAL SETUP FAILED" + ex.getMessage());
+            //return;
+        }
+		
+		//adding a serial listener
+		serial.addListener(new SerialDataEventListener() //function comes in as a parameter O.o fujava
+		{
+            @Override
+            public void dataReceived(SerialDataEvent event) 
+			{
+
+                try 
+				{ 
+                	packet_parse(event.getBytes()); // calls the parseing function; cant handle millisecond delays yet			
+                } 
+				
+				catch (IOException e) 
+				{
+                    e.printStackTrace();
+                }
+            }
+        });
+	}
+
+	static void printar(byte[] a) //array printer function for elminating useless extra code
 	{
 		System.out.println();
 		for(int l=0;l<a.length;l++)
 				System.out.print(a[l]);
 		System.out.println();
 	}
-	static void printar(int[] a)
+	static void printar(int[] a)//array printer function for elminating useless extra code
 	{
 		System.out.println();
 		for(int l=0;l<a.length;l++)
@@ -35,10 +79,10 @@ public class xbeetxrx
 		System.out.println();
 	}
 	
-	static void packet_parse(byte[] rec_dat) /accepts the input data and does relevant operations
+	static void packet_parse(byte[] rec_dat) //accepts the input data and does relevant operations
 	{
-		System.out.println("Invoked");
-		printar(rec_dat);
+		//System.out.println("Invoked");
+		//printar(rec_dat);
 		if(rec_dat[0]==(byte)0x7E) // checks if actual Xbee packet is recieved by checking for delmiter
 		{	//System.out.println("delimited");
 			if (rec_dat[11]==(byte)0xC9)							// checks last byte of address field in xbee frame
@@ -47,7 +91,7 @@ public class xbeetxrx
 				if (rec_dat[15]==(byte)0x03)
 				{
 					for(int i=0;i<8;i++)							// ###CHANGE TO YOUR NEEDS###
-						if((rec_dat[17]|(1<<(7-i)))==rec_dat[17];)	// Application Specific code change as per your needs
+						if((rec_dat[17]|(1<<(7-i)))==rec_dat[17])	// Application Specific code change as per your needs
 							a[i]=1;									// here rec_dat[15] is the first byte of recived data
 					System.out.println("rxd packet");				// i use it to ID what kind of packet i got for application
 					printar(a);										// ###CHANGE TO YOUR NEEDS###
@@ -62,6 +106,8 @@ public class xbeetxrx
 			}														//
 		}
 	}
+}
+
 	static byte[] frame_make(byte[] address, byte data[]) //makes the API mode frame for the Xbee
 	{
 		int s=18+data.length;
@@ -97,7 +143,7 @@ public class xbeetxrx
 	
 		cs = (byte)((-1)-cs);		//checksum = 0xFF-cs, 0xFF is -1 as a signed int
 		frame[i]=cs;			//put frame checksum in its place
-		System.out.println("frame Made");
+		//System.out.println("frame Made");
 		return frame;			//return frame
 	}
 	
@@ -124,7 +170,7 @@ public class xbeetxrx
 		//printswitch();
 		return sw(a);
 	}
-
+ 
 	static int send_byte(byte [] abc) //writes given byte array to serial
 	{    
 		try 
@@ -141,7 +187,7 @@ public class xbeetxrx
         }
     }
 	
-	static void sw_tog(int p)
+	static void sw_tog(int p) //toggles and sends frame for switch control
 	{
 			dat[0]=(byte)0x01;
 			dat[1]=(byte)0x01;
@@ -152,12 +198,12 @@ public class xbeetxrx
 				System.out.println("failure");
 	}
  	
-	static void sw_req()
+	static void sw_req() //requests switch status
 	{
 		dat[0]=(byte)0x02;
 		dat[1]=(byte)0x01;
 		byte[] abc=frame_make(r1,dat);
-		printar(abc);
+		//printar(abc);
 		if(send_byte(abc)!=1)
 				System.out.println("failure");
 		//System.out.println("swtich status requested");
@@ -165,59 +211,21 @@ public class xbeetxrx
 		
 	public static void main(String args[]) throws InterruptedException, IOException
 	{
-		try 
-		{
-            // create serial config object
-            SerialConfig config = new SerialConfig();
-
-            config.device("/dev/ttyUSB0")
-                  .baud(Baud._9600)
-                  .dataBits(DataBits._8)
-                  .parity(Parity.NONE)
-                  .stopBits(StopBits._1)
-                  .flowControl(FlowControl.NONE);
-
-			serial.open(config);
-			
-		}
-			
-		catch(IOException ex) 
-		{
-            System.out.println(" SERIAL SETUP FAILED" + ex.getMessage());
-            return;
-        }
-		//adding a serial listener
-
-		serial.addListener(new SerialDataEventListener() //function comes in as a parameter O.o fujava
-		{
-            @Override
-            public void dataReceived(SerialDataEvent event) 
-			{
-
-                try 
-				{ 
-                	packet_parse(event.getBytes()); // calls the parseing function; cant handle millisecond delays yet			
-                } 
-				
-				catch (IOException e) 
-				{
-                    e.printStackTrace();
-                }
-            }
-        });
+		xbeetxrx(); //invoke constructor IDK why i have to do this
+		
+		Scanner hey=new Scanner(System.in); //new scanner for getting input from user
+		int k;
 		
 		for(;;)
-		{
+		{	
+			System.out.println("enter switch");
+			k=hey.nextInt();		//get I/p from user 
+			sw_tog(k); 				//call toggle function
+			System.out.println("");
 			
-			sw_tog(1);
-			sw_tog(2); 
-			Thread.sleep(10);
-			sw_req();
-			Thread.sleep(60000);
-
+			Thread.sleep(10); //delay
+			sw_req(); // asks Arduino what status the switches are in
 		}
-
-
 	}
 }
 
