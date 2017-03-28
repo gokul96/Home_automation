@@ -175,7 +175,7 @@ public class ArduinoController {
 			dat[0]=(byte)0x01;
 			dat[1]=(byte)0x01;
 			dat[2]=(byte)toggle(p);
-			byte[] abc=frame_make(r1,dat);
+			byte[] abc=frame_make(r2,dat);
 			
 			if(send_byte(abc)!=1)
 			{
@@ -192,7 +192,7 @@ public class ArduinoController {
 	{
 		dat[0]=(byte)0x02;
 		dat[1]=(byte)0x01;
-		byte[] abc=frame_make(r1,dat);
+		byte[] abc=frame_make(r2,dat);
 		printar(abc);
 		if(send_byte(abc)!=1)
 				System.out.println("failure");
@@ -213,71 +213,71 @@ public class ArduinoController {
 	{
 		System.out.println("Switch control invoked..."); 
 		System.out.println(requestbody.get("status").toString());
-//		String sw = requestbody.get("status").toString();
-//		int i = Integer.parseInt(sw);
-//		
-//		//To open the serial port
-//		if(x==0)
-//		{
-//			System.out.println("trying to open serial port...");
-//			
-//			try 
-//			{
-//	            // create serial config object
-//	            SerialConfig config = new SerialConfig();
-//	
-//	            config.device("/dev/ttyUSB0")
-//	                  .baud(Baud._9600)
-//	                  .dataBits(DataBits._8)
-//	                  .parity(Parity.NONE)
-//	                  .stopBits(StopBits._1)
-//	                  .flowControl(FlowControl.NONE);
-//	
-//				serial.open(config);
-//				System.out.println("SERIAL PORT OPENED...");
-//			}
-//			catch(IOException ex) 
-//			{
-//	            System.out.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
-//	        }
-//			x++;
-//		}
-//		
-//		System.out.println("hello , serial port opened....."); 
+		String sw = requestbody.get("status").toString();
+		int i = Integer.parseInt(sw);
+		
+		//To open the serial port
+		if(x==0)
+		{
+			System.out.println("trying to open serial port...");
+			
+			try 
+			{
+	            // create serial config object
+	            SerialConfig config = new SerialConfig();
+	
+	            config.device("/dev/ttyUSB0")
+	                  .baud(Baud._9600)
+	                  .dataBits(DataBits._8)
+	                  .parity(Parity.NONE)
+	                  .stopBits(StopBits._1)
+	                  .flowControl(FlowControl.NONE);
+	
+				serial.open(config);
+				System.out.println("SERIAL PORT OPENED...");
+			}
+			catch(IOException ex) 
+			{
+	            System.out.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
+	        }
+			x++;
+		}
+		
+		System.out.println("hello , serial port opened....."); 
 //			
 //		//adding a serial listener
-//		serial.addListener(new SerialDataEventListener() //function comes in as a parameter O.o fujava
-//		{
-//            public void dataReceived(SerialDataEvent event) 
-//			{
-//            	System.out.println("adding a serial listener...");
-//                try 
-//				{ 
-//                    System.out.println("[HEX DATA]   " + event.getHexByteString());
-////					printar(event.getBytes());
-//                	packet_parse(event.getBytes());
-//					System.out.println("got data");							
-//                } 
-//				catch (IOException e) 
-//				{
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//		
-//			String ACK = sw_tog(i);
-//			JSONObject status = new JSONObject();
-//			try {
-//				status.put("ACK", ACK);
-//			} catch (JSONException e) {
-//				System.out.println("Exception in status...");
-//				e.printStackTrace();
-//			}
-//			
+		serial.addListener(new SerialDataEventListener() //function comes in as a parameter O.o fujava
+		{
+            public void dataReceived(SerialDataEvent event) 
+			{
+            	System.out.println("adding a serial listener...");
+                try 
+				{ 
+                    System.out.println("[HEX DATA]   " + event.getHexByteString());
+//					printar(event.getBytes());
+                	packet_parse(event.getBytes());
+					System.out.println("got data");							
+                } 
+				catch (IOException e) 
+				{
+                    e.printStackTrace();
+                }
+            }
+        });
+		
+			String ACK = sw_tog(i);
+			JSONObject status = new JSONObject();
+			try {
+				status.put("ACK", ACK);
+			} catch (JSONException e) {
+				System.out.println("Exception in status...");
+				e.printStackTrace();
+			}
+			
 //			sw_req();
 //			
-//			return status.toString();
-			return "hellooo";
+			return status.toString();
+//			return "hellooo";
 	}
 	
 	//one time switch request
