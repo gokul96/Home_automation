@@ -16,7 +16,7 @@
         <div class="row heading">
             <div class="col-md-4"><img src="./resources/images/logo-white-header.png" alt="logo" style="height: 82px;width: 147px;"></div>
             <div class="col-md-4">
-                <b><h1>GOKUL AUTOMATION SOLUTIONS</h1></b></div>
+                <b><h1>IOT AUTOMATION</h1></b></div>
         </div>
     </div>
     <div id="formdiv" style="height:225px;width:325px;border: 3px black;margin-left:40%;margin-top:10%;margin-right:auto;margin-bottom:auto;">
