@@ -11,8 +11,11 @@ public class xbeetxrx
 {
 	//Final variables 
 	static final Serial serial = SerialFactory.createInstance(); //pi4j serial instance creation
+	//IR
 	static final byte[] r1={(byte)0x00,(byte)0x13,(byte)0xA2,(byte)0x00,(byte)0x41,(byte)0x54,(byte)0xED,(byte)0xC9}; //address of router 1
+	//Switch
 	static final byte[] r2={(byte)0x00,(byte)0x13,(byte)0xA2,(byte)0x00,(byte)0x40,(byte)0xD7,(byte)0xBD,(byte)0x24}; //address of router 2
+	//dimmer ?
 	static final byte[] r3={(byte)0x00,(byte)0x13,(byte)0xA2,(byte)0x00,(byte)0x40,(byte)0xD7,(byte)0xBD,(byte)0x2F}; //address of router 3
 	//dyanmic variables
 	static int[] a={0,0,0,0,0,0,0,0};
@@ -85,7 +88,7 @@ public class xbeetxrx
 		//printar(rec_dat);
 		if(rec_dat[0]==(byte)0x7E) // checks if actual Xbee packet is recieved by checking for delmiter
 		{	//System.out.println("delimited");
-			if (rec_dat[11]==(byte)0xC9)							// checks last byte of address field in xbee frame
+			if (rec_dat[11]==(byte)0x24)							// checks last byte of address field in xbee frame
 			{
 				System.out.println("data recieved from router 1");
 				if (rec_dat[15]==(byte)0x03)
@@ -96,7 +99,7 @@ public class xbeetxrx
 					System.out.println("rxd packet");				// i use it to ID what kind of packet i got for application
 					printar(a);										// ###CHANGE TO YOUR NEEDS###
 				}													//
-			if (rec_dat[11]==(byte)0x24)							// checks last byte of address field in xbee frame
+			if (rec_dat[11]==(byte)0xC9)							// checks last byte of address field in xbee frame
 			{														//
 																	//
 			}														//			
