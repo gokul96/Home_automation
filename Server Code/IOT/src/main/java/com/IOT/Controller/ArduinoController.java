@@ -29,6 +29,7 @@ public class ArduinoController {
 //	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	int x=0;
+	int y=0;
 	
 	static int[] a={0,0,0,0,0,0,0,0};
 	static int dim_val;
@@ -186,6 +187,43 @@ public class ArduinoController {
 				System.out.println("success");
 				return "success";
 	}
+	
+	
+	//TO control the Dimmer
+		static String sw_Dimmer(int d)
+		{
+				dat[0]=(byte)0x01;
+				dat[1]=(byte)0x01;
+				dat[2]=(byte)d;
+				byte[] abc=frame_make(r3,dat);
+				
+				if(send_byte(abc)!=1)
+				{
+					System.out.println("Dim_failure");
+					return "failure";
+				}
+				else
+					System.out.println("Dim_success");
+					return "success";
+		}
+		
+		//TO control the IR
+				static String sw_IR(int r)
+				{
+						dat[0]=(byte)0x01;
+						dat[1]=(byte)0x01;
+						dat[2]=(byte)r;
+						byte[] abc=frame_make(r1,dat);
+						
+						if(send_byte(abc)!=1)
+						{
+							System.out.println("IR_failure");
+							return "failure";
+						}
+						else
+							System.out.println("IR_success");
+							return "success";
+				}
  	
 	//To get the status of the switches
 	static void sw_req()
@@ -200,93 +238,90 @@ public class ArduinoController {
 	}
 	
 	
-//	@RequestMapping(value = "/getIP", method = RequestMethod.GET)
-//	public @ResponseBody String get_IP() 
-//	{
-//		System.out.println("this is get ip...###");
-//		return "hellllloooooooooooooo******oo";
-//	}
-	
 	//To control
 	@RequestMapping(value="/control",method = RequestMethod.POST, produces="application/json") 
-	public @ResponseBody String control(@RequestBody Map <String,Object> requestbody) throws JSONException
+	public @ResponseBody String control(@RequestBody Map <String,Object> requestbody)
 	{
-		System.out.println("Switch control invoked..."); 
-		System.out.println(requestbody.get("status").toString());
-		String sw = requestbody.get("status").toString();
-		int i = Integer.parseInt(sw);
-		
-		//To open the serial port
-		if(x==0)
-		{
-			System.out.println("trying to open serial port...");
-			
-			try 
-			{
-	            // create serial config object
-	            SerialConfig config = new SerialConfig();
-	
-	            config.device("/dev/ttyUSB0")
-	                  .baud(Baud._9600)
-	                  .dataBits(DataBits._8)
-	                  .parity(Parity.NONE)
-	                  .stopBits(StopBits._1)
-	                  .flowControl(FlowControl.NONE);
-	
-				serial.open(config);
-				System.out.println("SERIAL PORT OPENED...");
-			}
-			catch(IOException ex) 
-			{
-	            System.out.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
-	        }
-			x++;
-		}
-		
-		System.out.println("hello , serial port opened....."); 
+		System.out.println("Switch control invoked...####"); 
+//		System.out.println(requestbody.get("status").toString());
+//		String sw = requestbody.get("status").toString();
+//		int i = Integer.parseInt(sw);
+//		
+////		//To open the serial port
+//		if(x==0)
+//		{
+//			System.out.println("trying to open serial port...");
+//			
+//			try 
+//			{
+//	            // create serial config object
+//	            SerialConfig config = new SerialConfig();
+//	
+//	            config.device("/dev/ttyUSB0")
+//	                  .baud(Baud._9600)
+//	                  .dataBits(DataBits._8)
+//	                  .parity(Parity.NONE)
+//	                  .stopBits(StopBits._1)
+//	                  .flowControl(FlowControl.NONE);
+//	
+//				serial.open(config);
+//				System.out.println("SERIAL PORT OPENED...");
+//			}
+//			catch(IOException ex) 
+//			{
+//	            System.out.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
+//	        }
+//			x++;
+//		}
+//		
+//		System.out.println("hello , serial port opened....."); 
 //			
 //		//adding a serial listener
-		serial.addListener(new SerialDataEventListener() //function comes in as a parameter O.o fujava
-		{
-            public void dataReceived(SerialDataEvent event) 
-			{
-            	System.out.println("adding a serial listener...");
-                try 
-				{ 
-                    System.out.println("[HEX DATA]   " + event.getHexByteString());
-//					printar(event.getBytes());
-                	packet_parse(event.getBytes());
-					System.out.println("got data");							
-                } 
-				catch (IOException e) 
-				{
-                    e.printStackTrace();
-                }
-            }
-        });
-		
-			String ACK = sw_tog(i);
-			JSONObject status = new JSONObject();
-			try {
-				status.put("ACK", ACK);
-			} catch (JSONException e) {
-				System.out.println("Exception in status...");
-				e.printStackTrace();
-			}
-			
-//			sw_req();
+//		serial.addListener(new SerialDataEventListener() //function comes in as a parameter O.o fujava
+//		{
+//            public void dataReceived(SerialDataEvent event) 
+//			{
+//            	System.out.println("adding a serial listener...");
+//                try 
+//				{ 
+//                    System.out.println("[HEX DATA]   " + event.getHexByteString());
+////					printar(event.getBytes());
+//                	packet_parse(event.getBytes());
+//					System.out.println("got data");							
+//                } 
+//				catch (IOException e) 
+//				{
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//		
+//			String ACK = sw_tog(i);
+//			JSONObject status = new JSONObject();
+//			try {
+//				status.put("ACK", ACK);
+//			} catch (JSONException e) {
+//				System.out.println("Exception in status...");
+//				e.printStackTrace();
+//			}
 //			
-			return status.toString();
-//			return "hellooo";
+//			return status.toString();
+			return "success";
 	}
 	
 	//one time switch request
 	@RequestMapping (value="/oneTimeSW_req", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody void oneTimeSW_req()
+	public @ResponseBody int[] oneTimeSW_req()
 	{
 		System.out.println("OneTimeSW_req invoked...");
-		System.out.println("a : "+ a);
-		sw_req();
+		System.out.println("Current status in Array : "+ a);
+		
+		if(y==0)
+		{
+//			sw_req();
+			y++;
+		}
+		return a;
 	}
 	
 	

@@ -86,10 +86,11 @@
     <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery.dataTables.min1.10.7.js"></script>
     <script>
-        < script >
+    
+        /* < script >
             $(function() {
                 $('#toggle-one').bootstrapToggle();
-            })
+            }) */
 
     </script>
     </script>
