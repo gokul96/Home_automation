@@ -28,12 +28,23 @@
         android:id="@+id/StopScanButton"
         android:layout_marginTop="40dp"/>
 
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:text="Room3"
+        android:id="@+id/room3Button"
+        android:layout_magin top
+        android:layout_below="@+id/StartScanButton"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="13dp" />
+
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="100dp"
+        android:layout_height="300"
         android:id="@+id/PeripheralTextView"
         android:scrollbars="vertical"
-        android:maxLines="30" />
+        android:maxLines="20"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

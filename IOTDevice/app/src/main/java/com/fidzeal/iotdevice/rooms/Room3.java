@@ -229,7 +229,7 @@ public class Room3 extends AppCompatActivity implements View.OnClickListener {
             protected void onPreExecute() {
                 super.onPreExecute();
                 pDialog = new ProgressDialog(Room3.this);
-                pDialog.setMessage("Loading...");
+                pDialog.setMessage("sending");
                 pDialog.show();
 
             }

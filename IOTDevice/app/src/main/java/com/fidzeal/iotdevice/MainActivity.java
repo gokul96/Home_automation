@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
         });
         stopScanningButton.setVisibility(View.INVISIBLE);
 
+        room1Button = (Button) findViewById()
+
         btManager = (BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
         btAdapter = btManager.getAdapter();
         btScanner = btAdapter.getBluetoothLeScanner();
@@ -99,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(result.getDevice().getName().equalsIgnoreCase("hall")){
                 long rssi = result.getRssi();
-                int status = getDifference(rssi);
+                int status = getDifference();
                 if(status == 1){
                     //stopScanning();
                     Intent intent = new Intent(MainActivity.this,Room1.class);

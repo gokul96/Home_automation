@@ -30,6 +30,8 @@ public class ArduinoController {
 	
 	int x=0;
 	int y=0;
+	int z=0;
+	int w=0;
 	static int dimval = 0;
 	static int ir = 0;
 	JSONObject st = new JSONObject();
@@ -217,7 +219,7 @@ public class ArduinoController {
 
 		
 		//TO get the Dimmer status
-				static String get_Dimmer()
+				static void get_Dimmer()
 				{
 						byte[] dat = {0,0,0};
 						dat[0]=(byte)0x02;
@@ -225,7 +227,7 @@ public class ArduinoController {
 						dat[2]=(byte)0x00;
 						byte[] abc=frame_make(r3,dat);
 						
-						return dimval+"";
+//						return dimval+"";
 				}
 		
 		//TO control the IR
@@ -246,6 +248,16 @@ public class ArduinoController {
 							return "IR_success";
 				}
  	
+				static void get_IR()
+				{
+						dat[0]=(byte)0x02;
+						dat[1]=(byte)0x02;
+						dat[2]=(byte)0x00;
+						byte[] abc=frame_make(r1,dat);
+						
+				}
+				
+				
 	//To get the status of the switches
 	static void sw_req()
 	{
@@ -473,7 +485,7 @@ public class ArduinoController {
 //			return "success";
 	}
 	
-	//one time switch request
+	//to get switch status
 	@RequestMapping (value="/oneTimeSW_req", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody int[] oneTimeSW_req()
 	{
@@ -483,13 +495,44 @@ public class ArduinoController {
 		if(y==0)
 		{
 			sw_req();
-			get_Dimmer();
+//			get_Dimmer();
 			y++;
 		}
 		return a;
 	}
 	
 	
+	//to get dimmer status
+		@RequestMapping (value="/dimmerStatus", method = RequestMethod.GET, produces = "application/json")
+		public @ResponseBody int dimmerStatus()
+		{
+			System.out.println("dimmerStatus invoked...");
+			System.out.println("Current status in dimmer : "+ dimval);
+			
+			if(z==0)
+			{
+				get_Dimmer();
+				z++;
+			}
+			return dimval;
+		}
+	
+		
+		//to get IR status
+				@RequestMapping (value="/irStatus", method = RequestMethod.GET, produces = "application/json")
+				public @ResponseBody int irStatus()
+				{
+					System.out.println("irStatus invoked...");
+					System.out.println("Current status in ir : "+ dimval);
+					
+					if(w==0)
+					{
+						get_IR();
+						w++;
+					}
+					return ir;
+				}
+		
 	//To get current status
 	@RequestMapping (value="/current_status",method=RequestMethod.GET,produces = "application/json")
 	 public @ResponseBody String current_Status()
