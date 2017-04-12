@@ -21,64 +21,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/text"
-        android:weightSum="4"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btn1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Switch 1" />
-
-        <Button
-            android:id="@+id/btn2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Switch 2" />
-
-        <Button
-            android:id="@+id/btn3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Switch 3" />
-
-        <Button
-            android:id="@+id/btn4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Switch 4" />
-
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/l2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/l1"
-        android:weightSum="4"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btn5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Switch 5" />
-
-        <Button
-            android:id="@+id/btn6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Switch 6" />
+        android:weightSum="3"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/btn7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/l1"
+            android:layout_marginTop="25dp"
             android:layout_weight="1"
             android:text="Switch 7" />
 
@@ -86,8 +37,18 @@
             android:id="@+id/btn8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/btn7"
+            android:layout_marginTop="35dp"
             android:layout_weight="1"
             android:text="Switch 8" />
+
+        <SeekBar
+            android:id="@+id/seekBar1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btn8"
+            android:layout_marginTop="45dp"
+            android:layout_weight="1" />
 
     </LinearLayout>
 

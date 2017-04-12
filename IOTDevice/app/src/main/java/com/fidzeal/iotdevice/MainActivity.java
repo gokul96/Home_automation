@@ -15,7 +15,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -31,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     BluetoothLeScanner btScanner;
     Button startScanningButton;
     Button stopScanningButton;
+    Button room1Button,room2Button,room3Button;
     TextView peripheralTextView;
     private final static int REQUEST_ENABLE_BT = 1;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
@@ -47,8 +47,66 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         peripheralTextView = (TextView) findViewById(R.id.PeripheralTextView);
         peripheralTextView.setMovementMethod(new ScrollingMovementMethod());
+        room1Button=(Button)findViewById(R.id.room11) ;
+        room1Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              //  Toast.makeText(getApplicationContext(),"clicked1", Toast.LENGTH_LONG).show();
+                stopScanning();
+
+
+                            Intent in = new Intent(MainActivity.this,Room1.class);
+
+                            startActivity(in);
+
+
+
+
+
+
+            }
+        });
+        room2Button=(Button)findViewById(R.id.room22 ) ;
+        room2Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //  Toast.makeText(getApplicationContext(),"clicked1", Toast.LENGTH_LONG).show();
+                stopScanning();
+
+
+                Intent in = new Intent(MainActivity.this,Room2.class);
+
+                startActivity(in);
+
+
+
+
+
+
+            }
+        });
+        room3Button=(Button)findViewById(R.id.room33 ) ;
+        room3Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //  Toast.makeText(getApplicationContext(),"clicked1", Toast.LENGTH_LONG).show();
+                stopScanning();
+
+
+                Intent in = new Intent(MainActivity.this,Room3.class);
+
+                startActivity(in);
+
+
+
+
+
+
+            }
+        });
 
         startScanningButton = (Button) findViewById(R.id.StartScanButton);
         startScanningButton.setOnClickListener(new View.OnClickListener() {
@@ -65,8 +123,6 @@ public class MainActivity extends AppCompatActivity {
         });
         stopScanningButton.setVisibility(View.INVISIBLE);
 
-        room1Button = (Button) findViewById()
-
         btManager = (BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
         btAdapter = btManager.getAdapter();
         btScanner = btAdapter.getBluetoothLeScanner();
@@ -76,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent,REQUEST_ENABLE_BT);
         }
+
+
 
         // Make sure we have access coarse location enabled, if not, prompt the user to enable it
         if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -91,6 +149,42 @@ public class MainActivity extends AppCompatActivity {
             });
             builder.show();
         }
+        /*room1Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"clicked1",Toast.LENGTH_LONG).show();
+
+               *//* Intent in = new Intent(MainActivity.this,Room1.class);
+
+                startActivity(in);*//*
+
+
+
+            }
+        });
+        room2Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                Toast.makeText(getApplicationContext(),"clicked2",Toast.LENGTH_LONG).show();
+               *//* Intent in = new Intent(MainActivity.this,Room2.class);
+
+                startActivity(in);*//*
+
+            }
+        });
+        room3Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"clicked3",Toast.LENGTH_LONG).show();
+
+               *//* Intent in = new Intent(MainActivity.this,Room3.class);
+
+                startActivity(in);*//*
+
+            }
+        });*/
     }
 
     // Device scan callback.

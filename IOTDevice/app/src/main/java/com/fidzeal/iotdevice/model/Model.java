@@ -16,6 +16,8 @@ public class Model {
 
     public String REFRESH_URL = ":8080/pi/Ardunio/oneTimeSW_req";
     public String STATUS_URL = ":8080/pi/Ardunio/control";
+    public String STATUS_URL_DIM = ":8080/pi/Ardunio/dimmer";
+    public String STATUS_URL_IR = ":8080/pi/Ardunio/ir";
 
     public final int CONNECTION_TIMEOUT = 120;
 

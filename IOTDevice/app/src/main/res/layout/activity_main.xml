@@ -22,29 +22,40 @@
         android:layout_marginTop="40dp"/>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="Stop Scanning"
-        android:id="@+id/StopScanButton"
-        android:layout_marginTop="40dp"/>
+        android:text="room1"
+        android:id="@+id/room11"
+        android:layout_marginTop="80dp"/>
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:text="room2"
+        android:id="@+id/room22"
+        android:layout_marginTop="130dp"/>
 
     <Button
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="Room3"
-        android:id="@+id/room3Button"
-        android:layout_magin top
-        android:layout_below="@+id/StartScanButton"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="13dp" />
+        android:text="room3"
+        android:id="@+id/room33"
+        android:layout_marginTop="160dp"/>
+
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="Stop Scanning"
+        android:id="@+id/StopScanButton"
+        android:layout_marginTop="200dp"/>
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="300"
+        android:layout_height="match_parent"
+        android:layout_marginTop="100dp"
         android:id="@+id/PeripheralTextView"
         android:scrollbars="vertical"
-        android:maxLines="20"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:maxLines="30" />
 
 </RelativeLayout>

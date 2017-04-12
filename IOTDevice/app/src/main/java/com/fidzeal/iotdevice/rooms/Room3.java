@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,10 +39,12 @@ public class Room3 extends AppCompatActivity implements View.OnClickListener {
     private String IP;
     private HttpClientPost httpClientPost;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.room3);
+        final SeekBar sk=(SeekBar) findViewById(R.id.seekBar1);
 
         sharedPreferences = getSharedPreferences(Model.getSingleton().IP_ADDRESS, Context.MODE_PRIVATE);
         pDialog = new ProgressDialog(Room3.this);
@@ -49,47 +52,270 @@ public class Room3 extends AppCompatActivity implements View.OnClickListener {
         doRefresh();
 
         mTextView = (TextView) findViewById(R.id.mText);
-        btnOne = (Button) findViewById(R.id.btn1);
-        btnTwo = (Button) findViewById(R.id.btn2);
-        btnThree = (Button) findViewById(R.id.btn3);
-        btnFour = (Button) findViewById(R.id.btn4);
-        btnFive = (Button) findViewById(R.id.btn5);
-        btnSix = (Button) findViewById(R.id.btn6);
+
         btnSeven = (Button) findViewById(R.id.btn7);
         btnEight = (Button) findViewById(R.id.btn8);
 
 
-        btnOne.setOnClickListener(this);
-        btnTwo.setOnClickListener(this);
-        btnThree.setOnClickListener(this);
-        btnFour.setOnClickListener(this);
-        btnFive.setOnClickListener(this);
-        btnSix.setOnClickListener(this);
+
         btnSeven.setOnClickListener(this);
         btnEight.setOnClickListener(this);
+
+        sk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int p=0;
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+               /* if(p<30)
+                {
+                    p=30;
+                    sk.setProgress(p);
+                }*/
+
+                if(p==0 )
+                {
+                    JSONObject json = new JSONObject();
+                    try {
+                        json.put(Model.getSingleton().status, String.valueOf(0).toString());
+
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+
+
+                    httpClientPost = new HttpClientPost() {
+
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
+                            pDialog = new ProgressDialog(Room3.this);
+                            pDialog.setMessage("sending");
+                            pDialog.show();
+
+                        }
+
+                        @Override
+                        protected void onPostExecute(String result) {
+                            super.onPostExecute(result);
+                            hidePDialog();
+                            if (result != null) {
+                                try {
+
+                                    JSONObject jsonObject1 = new JSONObject(result);
+                                    String status = jsonObject1.getString("ACK");
+                                    if(status.contentEquals("Dim_success")){
+                                        Toast.makeText(Room3.this,"Success!",Toast.LENGTH_LONG).show();
+
+
+                                    }
+                                    else{
+                                        Toast.makeText(Room3.this,"Failure!",Toast.LENGTH_LONG).show();
+
+                                    }
+                                }
+                                catch (Exception e){
+                                    e.printStackTrace();
+
+                                }
+                            } else {
+                                Toast.makeText(Room3.this, "internal error!", Toast.LENGTH_SHORT).show();
+
+                            }
+
+                        }
+                    };
+                    httpClientPost.execute(IP+Model.getSingleton().STATUS_URL_DIM,json.toString());
+
+                }
+
+                if(p>=1 && p<=25)
+                {
+                    JSONObject json = new JSONObject();
+                    try {
+                        json.put(Model.getSingleton().status, String.valueOf(1).toString());
+
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+
+
+                    httpClientPost = new HttpClientPost() {
+
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
+                            pDialog = new ProgressDialog(Room3.this);
+                            pDialog.setMessage("sending");
+                            pDialog.show();
+
+                        }
+
+                        @Override
+                        protected void onPostExecute(String result) {
+                            super.onPostExecute(result);
+                            hidePDialog();
+                            if (result != null) {
+                                try {
+
+                                    JSONObject jsonObject1 = new JSONObject(result);
+                                    String status = jsonObject1.getString("ACK");
+                                    if(status.contentEquals("Dim_success")){
+                                        Toast.makeText(Room3.this,"Success!",Toast.LENGTH_LONG).show();
+                                        hidePDialog();
+
+                                    }
+                                    else{
+                                        Toast.makeText(Room3.this,"Failure!",Toast.LENGTH_LONG).show();
+                                        hidePDialog();
+                                    }
+                                }
+                                catch (Exception e){
+                                    e.printStackTrace();
+                                    hidePDialog();
+                                }
+                            } else {
+                                Toast.makeText(Room3.this, "internal error!", Toast.LENGTH_SHORT).show();
+                                hidePDialog();
+                            }
+
+                        }
+                    };
+                    httpClientPost.execute(IP+Model.getSingleton().STATUS_URL_DIM,json.toString());
+
+                }
+                if(p>=26 && p<=50)
+                {
+                    JSONObject json = new JSONObject();
+                    try {
+                        json.put(Model.getSingleton().status, String.valueOf(2).toString());
+
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+
+
+                    httpClientPost = new HttpClientPost() {
+
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
+                            pDialog = new ProgressDialog(Room3.this);
+                            pDialog.setMessage("sending");
+                            pDialog.show();
+
+                        }
+
+                        @Override
+                        protected void onPostExecute(String result) {
+                            super.onPostExecute(result);
+                            hidePDialog();
+                            if (result != null) {
+                                try {
+
+                                    JSONObject jsonObject1 = new JSONObject(result);
+                                    String status = jsonObject1.getString("ACK");
+                                    if(status.contentEquals("Dim_success")){
+                                        Toast.makeText(Room3.this,"Success!",Toast.LENGTH_LONG).show();
+                                        hidePDialog();
+                                    }
+                                    else{
+                                        Toast.makeText(Room3.this,"Failure!",Toast.LENGTH_LONG).show();
+                                        hidePDialog();
+                                    }
+                                }
+                                catch (Exception e){
+                                    e.printStackTrace();
+                                    hidePDialog();
+                                }
+                            } else {
+                                Toast.makeText(Room3.this, "internal error!", Toast.LENGTH_SHORT).show();
+                                hidePDialog();
+                            }
+
+                        }
+                    };
+                    httpClientPost.execute(IP+Model.getSingleton().STATUS_URL_DIM,json.toString());
+
+                }
+                if(p>=51 && p<=100)
+                {
+                    JSONObject json = new JSONObject();
+                    try {
+                        json.put(Model.getSingleton().status, String.valueOf(3).toString());
+
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+
+
+                    httpClientPost = new HttpClientPost() {
+
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
+                            pDialog = new ProgressDialog(Room3.this);
+                            pDialog.setMessage("sending");
+                            pDialog.show();
+
+                        }
+
+                        @Override
+                        protected void onPostExecute(String result) {
+                            super.onPostExecute(result);
+                            hidePDialog();
+                            if (result != null) {
+                                try {
+
+                                    JSONObject jsonObject1 = new JSONObject(result);
+                                    String status = jsonObject1.getString("ACK");
+                                    if(status.contentEquals("Dim_success")){
+                                        Toast.makeText(Room3.this,"Success!",Toast.LENGTH_LONG).show();
+                                        hidePDialog();
+                                    }
+                                    else{
+                                        Toast.makeText(Room3.this,"Failure!",Toast.LENGTH_LONG).show();
+                                        hidePDialog();
+                                    }
+                                }
+                                catch (Exception e){
+                                    e.printStackTrace();
+                                    hidePDialog();
+                                }
+                            } else {
+                                Toast.makeText(Room3.this, "internal error!", Toast.LENGTH_SHORT).show();
+                                hidePDialog();
+                            }
+
+                        }
+                    };
+                    httpClientPost.execute(IP+Model.getSingleton().STATUS_URL_DIM,json.toString());
+
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
+                // TODO Auto-generated method stub
+                p=progress;
+                Log.d("Progress",""+p);
+
+
+
+
+            }
+        });
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn1:
-                getName(1);
-                break;
-            case R.id.btn2:
-                getName(2);
-                break;
-            case R.id.btn3:
-                getName(3);
-                break;
-            case R.id.btn4:
-                getName(4);
-                break;
-            case R.id.btn5:
-                getName(5);
-                break;
-            case R.id.btn6:
-                getName(6);
-                break;
+
             case R.id.btn7:
                 getName(7);
                 break;
@@ -98,6 +324,8 @@ public class Room3 extends AppCompatActivity implements View.OnClickListener {
                 break;
 
         }
+
+
     }
 
     @Override
