@@ -21,6 +21,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.fidzeal.iotdevice.rooms.Room1;
+import com.fidzeal.iotdevice.rooms.Room2;
+import com.fidzeal.iotdevice.rooms.Room3;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,9 +35,13 @@ public class MainActivity extends AppCompatActivity {
     private final static int REQUEST_ENABLE_BT = 1;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
+    long[] rrsiavg={0,0,0};
     long rssi;
     long rssi_old =0;
-
+    long new_rssi;
+    long r1_rssi;
+    long r2_rssi;
+    long r3_rssi;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,11 +107,22 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             if(result.getDevice().getName().equalsIgnoreCase("room1")){
-                long rssi = result.getRssi();
-                int status = getDifference(rssi);
+                new_rssi = result.getRssi();
+                int status = getDifference();
+                rssi_old=new_rssi;
                 if(status == 1){
                     //stopScanning();
                     Intent intent = new Intent(MainActivity.this,Room1.class);
+                    startActivity(intent);
+                }
+                if(status==2)
+                {
+                    Intent intent = new Intent(MainActivity.this,Room2.class);
+                    startActivity(intent);
+                }
+                if(status==3)
+                {
+                    Intent intent = new Intent(MainActivity.this,Room3.class);
                     startActivity(intent);
                 }
             }
@@ -118,24 +135,34 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private int getDifference(long new_rssi){
-        if(rssi_old == 0){
+    private int getDifference()
+    {
+        if(rssi_old == 0)
+        {
             rssi_old = new_rssi;
-            if(new_rssi <= -90){
+            if (new_rssi <= -90)
+            {
                 return 1;
             }
-            else{
+            else
+            {
                 return 0;
             }
         }
-        else if(rssi_old == new_rssi){
+        //if()
+        else if(rssi_old == new_rssi)
+        {
+            rssi_old=new_rssi;
             return 0;
         }
-        else if((rssi_old - new_rssi) <= -30 || (rssi_old - new_rssi)>= 30){
-
+        else if((rssi_old - new_rssi) <= -30 || (rssi_old - new_rssi)>= 30)
+        {
+            rssi_old=new_rssi;
             return 1;
         }
-        else{
+        else
+        {
+            rssi_old=new_rssi;
             return 0;
         }
 
