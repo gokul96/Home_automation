@@ -6,7 +6,7 @@ $(document).ready(function(){
 /*Control the switches...*/
 function Arduino_sw1(status){
 		
-	alert(status);
+//	alert(status);
 	$.ajax({
 		type : "POST",
 		url : './Ardunio/control',
@@ -17,21 +17,7 @@ function Arduino_sw1(status){
 		}),
 		success : function(data) 
 		{
-			alert('*****')
 			console.log(data);
-			
-			if(data.ACK =! null)
-			{
-				
-	            $(function() {
-	                $('#toggle-one').bootstrapToggle();
-	            })
-			}
-		else
-			{
-				alert("Sorry, Your BTicino server is not connected with network :(");
-			}
-			
 		},
 		error: function(xhr, statusText, err){
 		    console.log(xhr);
@@ -47,24 +33,41 @@ function oneTimeSW_req()
 		url  : './Ardunio/oneTimeSW_req',
 		success : function(data) {
 			console.log(data);
-			
-//			if(data.a[1]==0)
-//				{
-//				alert('******');
-//					$(function() {
-//		                $('#toggle-one').bootstrapToggle();
-//		            })
-//				}
-			
+			$('.submit>div').each(function(i){
+				var getStatus = $(this).find('input');
+						if(data[i] == 0){
+							getStatus.prop("checked", false);
+						}else{
+							getStatus.prop("checked", true);
+						}
+			});
 		},
 		error: function(xhr, statusText, err){
 		    console.log(xhr);
 		}
 	});
-
 }
 
-
+function Intensity(dimval){
+	
+//	alert(dimval);
+	$.ajax({
+		type : "POST",
+		url : './Ardunio/dimmer',
+		contentType:"application/json",
+		dataType: 'json',
+		data : JSON.stringify({
+		    "status": dimval
+		}),
+		success : function(data) 
+		{
+			console.log(data);
+		},
+		error: function(xhr, statusText, err){
+		    console.log(xhr);
+		}
+	});
+}
 
 //User authentication page
 	function User_authentication()

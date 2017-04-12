@@ -30,6 +30,9 @@ public class ArduinoController {
 	
 	int x=0;
 	int y=0;
+	static int dimval = 0;
+	static int ir = 0;
+	JSONObject st = new JSONObject();
 	
 	static int[] a={0,0,0,0,0,0,0,0};
 	static int dim_val;
@@ -64,37 +67,40 @@ public class ArduinoController {
 	}
 	
 	//current device status
-	static void packet_parse(byte[] rec_dat)
-	{
-		System.out.println("Invoked");
-		printar(rec_dat);
-		if(rec_dat[0]==(byte)0x7E)
-			System.out.println("delimited");
-		if (rec_dat[11]==(byte)0xC9)//data from router 1 type sw
-			if (rec_dat[15]==(byte)0x03)
-			{
-				
-				System.out.println("data recieved");
-				int sw_st=rec_dat[17];
-				int i=0;
-				for(i=0;i<8;i++)
-					if((sw_st|(1<<(7-i)))==sw_st)
-						a[i]=1;
-				System.out.println("rxd packet");
-				printar(a);
-				
-			}
-		
-		// for future routers
-		if (rec_dat[11]==(byte)0x24)
-		{
-			System.out.println("This is to be developed...1");
-		}
-		if (rec_dat[11]==(byte)0x2F)
-		{
-			System.out.println("This is to be developed...2");
-		}
-	}
+	static void packet_parse(byte[] rec_dat) //accepts the input data and does relevant operations
+	 {
+	  System.out.println("Invoked");
+	  //printar(rec_dat);
+	  if(rec_dat[0]==(byte)0x7E) // checks if actual Xbee packet is recieved by checking for delmiter
+	  { System.out.println("delimited");
+	   if (rec_dat[11]==(byte)0x24)       // checks last byte of address field in xbee frame
+	   {
+	    System.out.println("data recieved from router 2");
+	    if (rec_dat[15]==(byte)0x03)
+	    {
+	     for(int i=0;i<8;i++)       // ###CHANGE TO YOUR NEEDS###
+	      if((rec_dat[17]|(1<<(7-i)))==rec_dat[17]) // Application Specific code change as per your needs
+	       a[i]=1;         // here rec_dat[15] is the first byte of recived data
+	     System.out.println("rxd packet");    // i use it to ID what kind of packet i got for application
+	     printar(a);          // ###CHANGE TO YOUR NEEDS###
+	    }
+	   }//
+	   if (rec_dat[11]==(byte)0xC9)       // checks last byte of address field in xbee frame
+	   {              //
+	    System.out.println("data recieved from router 1");             //
+	   }              //   
+	   if (rec_dat[11]==(byte)0x2F)       // checks last byte of address field in xbee frame
+	   { 
+	    System.out.println("data recieved from router 3");   // 
+	    //Dimmer
+	    dimval=rec_dat[17];
+	    if(dimval!=3)
+	     System.out.println("dimmer is at"+((dimval)*25)+"%");
+	    else
+	     System.out.println("dimmer is at 100%");
+	   }              //
+	  }
+	 }
 	
 	static byte[] frame_make(byte[] address, byte data[])
 	{
@@ -192,6 +198,8 @@ public class ArduinoController {
 	//TO control the Dimmer
 		static String sw_Dimmer(int d)
 		{
+				dimval = d;
+				byte[] dat = {0,0,0};
 				dat[0]=(byte)0x01;
 				dat[1]=(byte)0x01;
 				dat[2]=(byte)d;
@@ -200,12 +208,25 @@ public class ArduinoController {
 				if(send_byte(abc)!=1)
 				{
 					System.out.println("Dim_failure");
-					return "failure";
+					return "Dim_failure";
 				}
 				else
 					System.out.println("Dim_success");
-					return "success";
+					return "Dim_success";
 		}
+
+		
+		//TO get the Dimmer status
+				static String get_Dimmer()
+				{
+						byte[] dat = {0,0,0};
+						dat[0]=(byte)0x02;
+						dat[1]=(byte)0x02;
+						dat[2]=(byte)0x00;
+						byte[] abc=frame_make(r3,dat);
+						
+						return dimval+"";
+				}
 		
 		//TO control the IR
 				static String sw_IR(int r)
@@ -218,11 +239,11 @@ public class ArduinoController {
 						if(send_byte(abc)!=1)
 						{
 							System.out.println("IR_failure");
-							return "failure";
+							return "IR_failure";
 						}
 						else
 							System.out.println("IR_success");
-							return "success";
+							return "IR_success";
 				}
  	
 	//To get the status of the switches
@@ -238,75 +259,218 @@ public class ArduinoController {
 	}
 	
 	
+	//To control IR
+			@RequestMapping(value="/ir",method = RequestMethod.POST, produces="application/json") 
+			public @ResponseBody String ir(@RequestBody Map <String,Object> requestbody)
+			{
+				System.out.println("IR control invoked...&****&"); 
+				System.out.println(requestbody.get("status").toString());
+				String sw = requestbody.get("status").toString();
+				int i = Integer.parseInt(sw);
+				
+//				//To open the serial port
+				if(x==0)
+				{
+					System.out.println("trying to open serial port...");
+					
+					try 
+					{
+			            // create serial config object
+			            SerialConfig config = new SerialConfig();
+			
+			            config.device("/dev/ttyUSB0")
+			                  .baud(Baud._9600)
+			                  .dataBits(DataBits._8)
+			                  .parity(Parity.NONE)
+			                  .stopBits(StopBits._1)
+			                  .flowControl(FlowControl.NONE);
+			
+						serial.open(config);
+						System.out.println("SERIAL PORT OPENED...");
+					}
+					catch(IOException ex) 
+					{
+			            System.out.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
+			        }
+					x++;
+				}
+				
+				System.out.println("hello , serial port opened....."); 
+					
+				//adding a serial listener
+				serial.addListener(new SerialDataEventListener() //function comes in as a parameter O.o fujava
+				{
+		            public void dataReceived(SerialDataEvent event) 
+					{
+		            	System.out.println("adding a serial listener...");
+		                try 
+						{ 
+		                    System.out.println("[HEX DATA]   " + event.getHexByteString());
+//							printar(event.getBytes());
+		                	packet_parse(event.getBytes());
+							System.out.println("got data");							
+		                } 
+						catch (IOException e) 
+						{
+		                    e.printStackTrace();
+		                }
+		            }
+		        });
+				
+					String ACK = sw_IR(i);
+					JSONObject status = new JSONObject();
+					try {
+						status.put("ACK", ACK);
+					} catch (JSONException e) {
+						System.out.println("Exception in status...");
+						e.printStackTrace();
+					}
+					
+					return status.toString();
+//					return "success";
+			}
+	
+	
+	//To control Dimmer
+		@RequestMapping(value="/dimmer",method = RequestMethod.POST, produces="application/json") 
+		public @ResponseBody String dimmer(@RequestBody Map <String,Object> requestbody)
+		{
+			System.out.println("Dimmer control invoked...&****&"); 
+			System.out.println(requestbody.get("status").toString());
+			String sw = requestbody.get("status").toString();
+			int i = Integer.parseInt(sw);
+			
+//			//To open the serial port
+			if(x==0)
+			{
+				System.out.println("trying to open serial port...");
+				
+				try 
+				{
+		            // create serial config object
+		            SerialConfig config = new SerialConfig();
+		
+		            config.device("/dev/ttyUSB0")
+		                  .baud(Baud._9600)
+		                  .dataBits(DataBits._8)
+		                  .parity(Parity.NONE)
+		                  .stopBits(StopBits._1)
+		                  .flowControl(FlowControl.NONE);
+		
+					serial.open(config);
+					System.out.println("SERIAL PORT OPENED...");
+				}
+				catch(IOException ex) 
+				{
+		            System.out.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
+		        }
+				x++;
+			}
+			
+			System.out.println("hello , serial port opened....."); 
+				
+			//adding a serial listener
+			serial.addListener(new SerialDataEventListener() //function comes in as a parameter O.o fujava
+			{
+	            public void dataReceived(SerialDataEvent event) 
+				{
+	            	System.out.println("adding a serial listener...");
+	                try 
+					{ 
+	                    System.out.println("[HEX DATA]   " + event.getHexByteString());
+//						printar(event.getBytes());
+	                	packet_parse(event.getBytes());
+						System.out.println("got data");							
+	                } 
+					catch (IOException e) 
+					{
+	                    e.printStackTrace();
+	                }
+	            }
+	        });
+			
+				String ACK = sw_Dimmer(i);
+				JSONObject status = new JSONObject();
+				try {
+					status.put("ACK", ACK);
+				} catch (JSONException e) {
+					System.out.println("Exception in status...");
+					e.printStackTrace();
+				}
+				
+				return status.toString();
+//				return "success";
+		}
+	
 	//To control
 	@RequestMapping(value="/control",method = RequestMethod.POST, produces="application/json") 
 	public @ResponseBody String control(@RequestBody Map <String,Object> requestbody)
 	{
-		System.out.println("Switch control invoked...####"); 
-//		System.out.println(requestbody.get("status").toString());
-//		String sw = requestbody.get("status").toString();
-//		int i = Integer.parseInt(sw);
-//		
-////		//To open the serial port
-//		if(x==0)
-//		{
-//			System.out.println("trying to open serial port...");
-//			
-//			try 
-//			{
-//	            // create serial config object
-//	            SerialConfig config = new SerialConfig();
-//	
-//	            config.device("/dev/ttyUSB0")
-//	                  .baud(Baud._9600)
-//	                  .dataBits(DataBits._8)
-//	                  .parity(Parity.NONE)
-//	                  .stopBits(StopBits._1)
-//	                  .flowControl(FlowControl.NONE);
-//	
-//				serial.open(config);
-//				System.out.println("SERIAL PORT OPENED...");
-//			}
-//			catch(IOException ex) 
-//			{
-//	            System.out.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
-//	        }
-//			x++;
-//		}
-//		
-//		System.out.println("hello , serial port opened....."); 
-//			
-//		//adding a serial listener
-//		serial.addListener(new SerialDataEventListener() //function comes in as a parameter O.o fujava
-//		{
-//            public void dataReceived(SerialDataEvent event) 
-//			{
-//            	System.out.println("adding a serial listener...");
-//                try 
-//				{ 
-//                    System.out.println("[HEX DATA]   " + event.getHexByteString());
-////					printar(event.getBytes());
-//                	packet_parse(event.getBytes());
-//					System.out.println("got data");							
-//                } 
-//				catch (IOException e) 
-//				{
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//		
-//			String ACK = sw_tog(i);
-//			JSONObject status = new JSONObject();
-//			try {
-//				status.put("ACK", ACK);
-//			} catch (JSONException e) {
-//				System.out.println("Exception in status...");
-//				e.printStackTrace();
-//			}
-//			
-//			return status.toString();
-			return "success";
+		System.out.println("switch control invoked...****"); 
+		System.out.println(requestbody.get("status").toString());
+		String sw = requestbody.get("status").toString();
+		int i = Integer.parseInt(sw);
+		
+//		//To open the serial port
+		if(x==0)
+		{
+			System.out.println("trying to open serial port...");
+			
+			try 
+			{
+	            // create serial config object
+	            SerialConfig config = new SerialConfig();
+	
+	            config.device("/dev/ttyUSB0")
+	                  .baud(Baud._9600)
+	                  .dataBits(DataBits._8)
+	                  .parity(Parity.NONE)
+	                  .stopBits(StopBits._1)
+	                  .flowControl(FlowControl.NONE);
+	
+				serial.open(config);
+				System.out.println("SERIAL PORT OPENED...");
+			}
+			catch(IOException ex) 
+			{
+	            System.out.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
+	        }
+			x++;
+		}
+		
+		System.out.println("hello , serial port opened....."); 
+			
+		//adding a serial listener
+		serial.addListener(new SerialDataEventListener() //function comes in as a parameter O.o fujava
+		{
+            public void dataReceived(SerialDataEvent event) 
+			{
+            	System.out.println("adding a serial listener...");
+                try 
+				{ 
+                    System.out.println("[HEX DATA]   " + event.getHexByteString());
+//					printar(event.getBytes());
+                	packet_parse(event.getBytes());
+					System.out.println("got data");							
+                } 
+				catch (IOException e) 
+				{
+                    e.printStackTrace();
+                }
+            }
+        });
+		
+			String ACK = sw_tog(i);
+			JSONObject status = new JSONObject();
+			try {
+				status.put("ACK", ACK);
+			} catch (JSONException e) {
+				System.out.println("Exception in status...");
+				e.printStackTrace();
+			}
+			
+			return status.toString();
+//			return "success";
 	}
 	
 	//one time switch request
@@ -318,7 +482,8 @@ public class ArduinoController {
 		
 		if(y==0)
 		{
-//			sw_req();
+			sw_req();
+			get_Dimmer();
 			y++;
 		}
 		return a;
